@@ -28,16 +28,10 @@ class TreeNode{
 
         void set_next_node(TreeNode* next) {
             this->next_node = next;
-            if (next != nullptr) {
-                next->set_prev_node(this);
-            }
         }
 
         void set_prev_node(TreeNode* prev) {
             this->prev_node = prev;
-            if (prev != nullptr) {
-                prev->set_next_node(this);
-            }
         }
 
         TreeNode* get_next_node() const {
@@ -53,10 +47,12 @@ class TreeNode{
                 throw std::out_of_range("Index out of range");
             if (this->current_children_size >= this->children_size)
                 throw std::overflow_error("Maximum children size reached");
+            if (this->children[index] != nullptr)
+                throw std::runtime_error("Child already exists at this index");
             this->children[index] = child;
             ++this->current_children_size;
         }
-        
+
         TreeNode* remove_child(int index) {
             if (index < 0 || index >= this->current_children_size) {
                 throw std::out_of_range("Index out of range");
@@ -66,21 +62,20 @@ class TreeNode{
             --this->current_children_size;
             return child_to_remove;
         }
-        
-        int get_current_children_size() {
+
+        int get_current_children_size() const {
             return this->current_children_size;
         }
 
-        int get_children_size() {
+        int get_children_size() const {
             return this->children_size;
         }
 
         TreeNode** get_children() const {
-            TreeNode** children_copy = new TreeNode*[this->children_size];
-            for (int i = 0; i < this->current_children_size; ++i) {
-                children_copy[i] = this->children[i];
-            }
-            return children_copy;
+            return this->children;
         }
 
+    ~TreeNode() {
+        delete[] children;
+    }
 };
