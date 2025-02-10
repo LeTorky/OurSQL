@@ -50,8 +50,24 @@ class BPlusTree: public ITree<Key, Data> {
             }
 
             // middle_key < 0 then key might exist in a child.
+            BPlusTreeNode<Key, Value>* child;
+            Key start_key = current_node->get_key(start_index);
+            Key end_key = current_node->get_key(end_index);
 
+            CompareResult start_compare = this->__comparator(search_key, start_key);
+            CompareResult end_compare = this->__comparator(search_key, end_key);
 
+            if (start_compare == Less) {
+                //TODO: get_child(index)
+                child = current_node->get_child(start_index - 1);
+            } else if (end_compare == Less) {
+                child = current_node->get_child(start_index + 1);
+            } else {
+                child = current_node->get_child(end_index + 1);
+            }
+
+            //TODO: get_key_count()
+            return this->__search(search_key, child, 0, current_node->get_key_count());
         }
     public:
         Value search(Key key){
